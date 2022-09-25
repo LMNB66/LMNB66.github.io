@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+	<title>Balance_car</title>
+	<style>
+		.no-touch{
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+		}
+		#straight{
+			width:45%;
+		}
+		#data{
+			width:10%;
+			vertical-align:top;
+		}
+		#turn{
+			width:45%;
+		}
+		#forward{
+			width:0;
+			border:80px solid transparent;
+			border-bottom-color: blue;
+		}
+		#back{
+			width:0;
+			border:80px solid transparent;
+			border-top-color: green;
+			margin-top:20px;
+		}
+		#left{
+			width:0;
+			border:80px solid transparent;
+			border-right-color: red;
+			display: inline-block;
+		}
+		#right{
+			width:0;
+			border:80px solid transparent;
+			border-left-color: pink;
+			display: inline-block;
+			margin-left:20px;
+		}
+	</style>
+</head>
+
+<body>
+	<table width="100%">
+	<tr align="center">
+		<td id="straight">
+			<div>
+				<div id="forward" 	ontouchstart="moveDir(1)" ontouchend="moveDir(5)"></div>
+				<div id="back" 		ontouchstart="moveDir(2)" ontouchend="moveDir(6)"></div>
+			</div>
+		</td>
+		
+		<td id="data">
+			<table style="border:1px solid #000;">
+				<tr>
+					<td>电压：</td>
+					<td id="voltage">3.99</td>
+				</tr>
+				<tr>
+					<td>角度：</td>
+					<td id="angle">0</td>
+				</tr>
+			</table>
+		</td>
+		
+		<td id="turn">
+			<div>
+				<div id="left" 		ontouchstart="moveDir(3)" ontouchend="moveDir(7)"></div>
+				<div id="right" 	ontouchstart="moveDir(4)" ontouchend="moveDir(8)"></div>
+			</div>
+		</td>
+	</tr>
+	</table>
+<script>
+	function showData(){
+		var volhttp = new XMLHttpRequest();
+		var anghttp = new XMLHttpRequest();
+		volhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				document.getElementById("voltage").innerHTML =
+				this.responseText;
+			}
+		};
+		volhttp.open("GET", "/voltage", true);
+		volhttp.send();
+		anghttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				document.getElementById("angle").innerHTML =
+				this.responseText;
+			}
+		};
+		anghttp.open("GET", "/angle", true);
+		anghttp.send();
+	}
+	function moveDir(dir){
+		switch(dir)
+		{
+			case 1:
+				document.getElementById("forward").style="border-bottom-color: black;";
+				break;
+			case 2:
+				document.getElementById("back").style="border-top-color: black;";
+				break;
+			case 3:
+				document.getElementById("left").style="border-right-color: black;";
+				break;
+			case 4:
+				document.getElementById("right").style="border-left-color: black;";
+				break;
+			case 5:
+				document.getElementById("forward").style="border-bottom-color: blue;";
+				break;
+			case 6:
+				document.getElementById("back").style="border-top-color: green;";
+				break;
+			case 7:
+				document.getElementById("left").style="border-right-color: red;";
+				break;
+			case 8:
+				document.getElementById("right").style="border-left-color: pink;";
+				break;
+		}
+		
+		var	movehttp = new XMLHttpRequest();
+		movehttp.open("GET", "/move?dir="+dir, true);
+		movehttp.send();
+	}
+	window.onload=setInterval(showData,1000);
+</script>
+</body>
+</html>
